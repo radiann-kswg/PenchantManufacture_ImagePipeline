@@ -1,0 +1,4 @@
+[submodule "basis"]
+	path = basis
+	url = https://github.com/radiann-kswg/PenchantManufacture_ImageAssets
+	branch = main
