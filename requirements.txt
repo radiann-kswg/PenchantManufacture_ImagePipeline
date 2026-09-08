@@ -1,0 +1,2 @@
+# PenchantManufacture_ImagePipeline — 依存は本家（basis/）と同一
+-r basis/requirements.txt

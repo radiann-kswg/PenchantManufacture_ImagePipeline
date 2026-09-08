@@ -54,6 +54,9 @@ PenchantManufacture_ImagePipeline リポジトリ固有指示の **唯一の正�
 | `basis/src/glyphs_roman/roman_*.svg`（合成ローマ数字ソース・54点） | `basis/dist/glyphs_decal_square/{variant}/*.png` |
 | `basis/assets/fonts/PenchantManufacture.otf`（advance・GPOS カーニング・OS/2 win 帯） | `basis/dist/glyphs_roman/`, `basis/dist/glyphs_spacer/` |
 
+> 実装（`scripts/typeset.py`）は `src/glyphs/*.svg` と同一のアウトラインを OTF から `SVGPathPen` で
+> 直接読む（`generate_roman.py` と同じ経路）。SVG ファイルの解析は行わない（[docs/HANDOFF_PLAN.md] §3）。
+
 **デカール PNG を素材にしてはならない。** デカールは 1 字ごとに外ハロー 10px ＋
 キーライン 6px ＋ `CROP_MARGIN` 13px を各辺に持つため、並べると字間にそれが二重に入り、
 密な数式で字がくっついて見える。またパディングが実メトリクスを覆い隠し、精密配置ができない。
@@ -112,6 +115,16 @@ PenchantManufacture_ImagePipeline/
 │   └── copilot-instructions.md
 ├── .gitmodules              ← basis → radiann-kswg/PenchantManufacture_ImageAssets (main)
 ├── basis/                   ← 【サブモジュール】PenchantManufacture_ImageAssets（読み取り専用）
+├── scripts/
+│   ├── typeset.py           ← 組版本体（TeX 風の式 → SVG/PNG）。CLI 兼ライブラリ
+│   └── build_previews.py    ← README 掲載プレビュー（docs/previews/）の再生成
+├── tests/test_typeset.py    ← 最小セルフチェック
+├── docs/
+│   ├── TYPESET_SPEC.md      ← 組版仕様の SSOT（グリッド・各構造の配置規則・実測値）
+│   ├── HANDOFF_PLAN.md      ← 引継ぎ資料（未対応タスク・本家連動タスク・決定事項）
+│   └── previews/*.png       ← README 掲載画像（build_previews.py の生成物。手で置かない）
+├── README.md
+├── requirements.txt         ← `-r basis/requirements.txt`
 └── LICENSE                  ← CC BY 4.0
 ```
 
@@ -129,7 +142,25 @@ git submodule update --remote basis          # 本家の main へ追従
 
 ---
 
+## ドキュメントの優先順位
+
+| 文書 | 役割 |
+| --- | --- |
+| 本ファイル | 責務分界・入力の契約・禁止事項 |
+| [docs/TYPESET_SPEC.md] | **組版規則の正**。セル定義（1 セル = 16.5 units）・分数／括弧／根号／上下付きの配置式・実測値 |
+| [docs/HANDOFF_PLAN.md] | 未対応タスク、本家 `GLYPH_EXTENSION_PLAN.md` §6 との連動表、決定事項の記録 |
+| README.md | 利用者向け。記法一覧とプレビュー |
+
+組版規則を変えるときは **SPEC → 実装 → テスト → `python scripts/build_previews.py`** の順で、
+`docs/previews/` の再生成を同じコミットに含める（本家の README プレビュー運用と同じ）。
+
 ## 実装の指針
+
+- 組版は `scripts/typeset.py` に集約されている（解析 → `Box` レイアウト → SVG → PNG）。
+  新しい構造（環境）を足すときは `layout()` に分岐を 1 つ足し、配置式を [docs/TYPESET_SPEC.md] §4 に書く。
+- **グリフの拡大縮小は上付き／下付きの 50% 代替以外で行わない。** 高さが要る図形（括弧・根号）は
+  `Font.delim`（分割＋延長片）で作る。
+- 位置・間隔はセル（`U`）の整数倍。定数は `typeset.py` 冒頭の「組版定数（セル数）」にまとめる。
 
 - 本家の作業開始時チェックに従い、まず `basis/docs/glyph_map.txt` で利用可能グリフを把握する。
 - 収録字は本家が正。**本家に無い字は組版できない**ので、必要な字が欠けている場合は
@@ -141,6 +172,9 @@ git submodule update --remote basis          # 本家の main へ追従
   既存英字グリフを合成する（トークン名は本家の予約と衝突させないこと）。
 
 ---
+
+[docs/TYPESET_SPEC.md]: docs/TYPESET_SPEC.md
+[docs/HANDOFF_PLAN.md]: docs/HANDOFF_PLAN.md
 
 ## 技術スタック
 
@@ -167,7 +201,7 @@ git submodule update --remote basis          # 本家の main へ追従
 
 本家と同一: `<type>(<scope>): <subject>`
 （type: `feat` `fix` `build` `docs` `chore` `style`）。
-scope に `layout` `render` `api` `basis` を追加で用いてよい
+scope に `layout` `render` `api` `basis` `docs` を追加で用いてよい
 （`basis` はサブモジュール参照コミットの更新）。
 
 ---
