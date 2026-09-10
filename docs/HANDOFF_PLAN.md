@@ -1,6 +1,8 @@
 # 引継ぎ資料（HANDOFF_PLAN）— 未対応タスクと本家連動
 
-> 状態: v0.1（2026-09-08）。`scripts/typeset.py` の初版時点。
+> 状態: v0.2（2026-09-10）。`basis/` 参照 `4b2b6ab`（PenchantManufacture **v4.0-release**）。
+> **TeX 互換化のロードマップは [TEX_COMPAT_PLAN.md] へ分離した**（本書は本家連動と、
+> TeX 互換に属さない未対応タスク・決定事項を扱う）。
 > 本家（`basis/`）側の予定は `basis/docs/GLYPH_EXTENSION_PLAN.md` §6 を正とし、本書はそれに
 > 対する**本リポジトリ側の対応**を記す。本家に下流向けの分岐・依存を入れないこと（[AGENTS.md]）。
 >
@@ -8,7 +10,7 @@
 
 ---
 
-## 0. 現在できること（v0.1）
+## 0. 現在できること（実装 v0.1 = `scripts/typeset.py` 初版）
 
 | 機能 | 状態 | 備考 |
 | --- | --- | --- |
@@ -22,6 +24,7 @@
 | 設計グリッド量子化・整数 px 出力 | ✅ | `--cell N` |
 | クレジット埋め込み | ✅ | PNG tEXt / SVG `<desc>` |
 | テスト | ✅ | `tests/test_typeset.py`（6 件） |
+| **TeX 記法互換** | ⚠️ | LaTeX ソースは**そのままでは通らない**。環境・`\sum_{i=1}^{n}` 記法・関数名・数式スタイル・アクセントが未対応。計画は [TEX_COMPAT_PLAN.md] |
 
 ---
 
@@ -41,7 +44,7 @@
 | U8 | **B8 山括弧** ⟨ ⟩ « » ‹ › | P4f | `\langle \rangle` を `\left \right` の対象に追加。`cuts()` が垂直ステム区間を見つけられない（山形は全域斜め）ため、**山括弧だけは延長片方式が使えない**。`(` と同様に扱えない場合は「伸長しない」か「上下端分割＋斜め延長」を要設計 | `Font.delim` |
 | U9 | **P7b ギリシャアクセント 20 字**（OTF のみ） | §4Y | `COMMANDS` へ `\acute{α}` 相当は不要、文字直接入力で使える。対応表不要 | — |
 | U10 | 下付き小文字（ᵢ ⱼ ₖ ₐ ₑ …）は本家に**予定なし** | — | 50% 縮小代替のまま（ステム 3 セル相当）。本家へ作字を依頼するなら U+1D62 ᵢ / U+2C7C ⱼ / U+2096 ₖ / U+2090 ₐ / U+2091 ₑ / U+2092 ₒ / U+2093 ₓ / U+1D65 ᵥ が数式頻出。収録されたら `SUB` 表に追記するだけで置換される | `SUB` |
-| U11 | 本家がフォントを更新（v4.x）したとき | — | `U = 660/40`・`rule`・`axis`・上下付きの帯（28–48 / −12–8 セル）は**実測値**。`tests/test_typeset.py` が通るか確認し、`TYPESET_SPEC.md` §2 の表を再実測して更新 | `TYPESET_SPEC.md` |
+| U11 | 本家がフォントを更新（v4.x）したとき | — | `U = 660/40`・`rule`・`axis`・上下付きの帯（28–48 / −12–8 セル）は**実測値**。`tests/test_typeset.py` が通るか確認し、`TYPESET_SPEC.md` §2 の表を再実測して更新。**v4.0-release（`4b2b6ab`）で実施済み（2026-09-10）**: 実測値に変化なし、テスト 6/6 通過、`docs/previews/` はバイト一致で再生成不要 | `TYPESET_SPEC.md` |
 
 サブモジュール更新手順（[AGENTS.md]）:
 
@@ -56,6 +59,18 @@ git add basis docs/previews && git commit -m "chore(basis): bump to <sha>"
 ## 2. 本リポジトリ単独の未対応タスク
 
 優先度: **A**（Bot 運用に必要）> **B**（表現力）> **C**（仕上げ）。
+
+> **TeX 互換に属するタスクは [TEX_COMPAT_PLAN.md] が正**。下表の T3・T4・T6・T7 は
+> そちらの相へ吸収済みで、対応は次のとおり:
+>
+> | 本書 | TEX_COMPAT_PLAN の相 |
+> | --- | --- |
+> | T3（`&` 揃え） | X5（環境 `align` / `aligned`） |
+> | T4（`\sum_{i=1}^{n}`） | X4（添字の TeX 化・`\limits` 後置化） |
+> | T5（山括弧・斜め画の可変高） | X10（本家 P4f 待ち）＋フォールバックは本書のまま |
+> | T6（行内の空きの再検討） | X2（アトム種別とスペーシング・§3 に設計値） |
+> | T7（左揃え・右揃え） | X5（`cases` / `array` の列揃えと同じ実装） |
+> | T9（`\text{…}` と空白） | X6（関数名・`\operatorname`）＋ X9（空白命令） |
 
 | # | 優先 | 内容 | 設計メモ |
 | --- | --- | --- | --- |
@@ -94,7 +109,10 @@ git add basis docs/previews && git commit -m "chore(basis): bump to <sha>"
 2. `python tests/test_typeset.py` が通ることを確認。
 3. 組版規則を変えたら `docs/TYPESET_SPEC.md` を先に直し、`python scripts/build_previews.py` で
    `docs/previews/` を再生成して同じコミットに含める（本家の README プレビュー運用と同じ）。
-4. コミット規約: `<type>(<scope>): <subject>`、scope は `layout` `render` `api` `basis` `docs`。
+4. TeX 互換に関わる作業なら [TEX_COMPAT_PLAN.md] §1 のフェーズ表で着手位置を確認し、
+   §8 の「作者の判断が要る項目」が未決のフェーズには入らない。
+5. コミット規約: `<type>(<scope>): <subject>`、scope は `layout` `render` `api` `basis` `docs`。
 
 [AGENTS.md]: ../AGENTS.md
 [GLYPH_EXTENSION_PLAN.md]: ../basis/docs/GLYPH_EXTENSION_PLAN.md
+[TEX_COMPAT_PLAN.md]: TEX_COMPAT_PLAN.md

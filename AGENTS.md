@@ -122,6 +122,7 @@ PenchantManufacture_ImagePipeline/
 ├── docs/
 │   ├── TYPESET_SPEC.md      ← 組版仕様の SSOT（グリッド・各構造の配置規則・実測値）
 │   ├── HANDOFF_PLAN.md      ← 引継ぎ資料（未対応タスク・本家連動タスク・決定事項）
+│   ├── TEX_COMPAT_PLAN.md   ← TeX 互換化のロードマップ（記法互換・組版能力・グリフ依存）
 │   └── previews/*.png       ← README 掲載画像（build_previews.py の生成物。手で置かない）
 ├── README.md
 ├── requirements.txt         ← `-r basis/requirements.txt`
@@ -149,6 +150,7 @@ git submodule update --remote basis          # 本家の main へ追従
 | 本ファイル | 責務分界・入力の契約・禁止事項 |
 | [docs/TYPESET_SPEC.md] | **組版規則の正**。セル定義（1 セル = 16.5 units）・分数／括弧／根号／上下付きの配置式・実測値 |
 | [docs/HANDOFF_PLAN.md] | 未対応タスク、本家 `GLYPH_EXTENSION_PLAN.md` §6 との連動表、決定事項の記録 |
+| [docs/TEX_COMPAT_PLAN.md] | **TeX 互換化の計画**。LaTeX 記法との差分・アトム間空き・数式スタイル・作字依頼の一覧 |
 | README.md | 利用者向け。記法一覧とプレビュー |
 
 組版規則を変えるときは **SPEC → 実装 → テスト → `python scripts/build_previews.py`** の順で、
@@ -175,6 +177,9 @@ git submodule update --remote basis          # 本家の main へ追従
 
 [docs/TYPESET_SPEC.md]: docs/TYPESET_SPEC.md
 [docs/HANDOFF_PLAN.md]: docs/HANDOFF_PLAN.md
+[docs/TEX_COMPAT_PLAN.md]: docs/TEX_COMPAT_PLAN.md
+[AGENTS.md]: basis/AGENTS.md
+[basis/docs/GLYPH_EXTENSION_PLAN.md]: basis/docs/GLYPH_EXTENSION_PLAN.md
 
 ## 技術スタック
 

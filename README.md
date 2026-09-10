@@ -72,6 +72,13 @@ TeX 風の最小サブセットです。空白は無視され、二項演算子�
 `\sum \prod \int` は本家 OTF の C2 大型演算子収録待ち（[docs/HANDOFF_PLAN.md](docs/HANDOFF_PLAN.md)）。
 それまでは `\limits{Σ}{…}{…}` のようにギリシャ大文字を渡してください。
 
+> **TeX 互換について**: 上表は TeX **風**の独自サブセットで、LaTeX ソースをそのまま貼っても通りません。
+> 環境（`\begin{pmatrix}`）・`\sum_{i=1}^{n}` 記法・関数名（`\sin` `\log` `\lim`）・
+> 数式スタイル（`\displaystyle`）・アクセント（`\hat{}`）・罫線装飾（`\overline{}`）は未対応で、
+> `\limits{}{}{}` `\matrix{}` は TeX に無い独自形です。`\Alpha`…`\Omega` も独自拡張
+> （TeX で定義されるギリシャ大文字は `\Gamma \Delta \Theta \Lambda \Xi \Pi \Sigma \Upsilon \Phi \Psi \Omega` の 11 種）。
+> LaTeX 互換へ寄せる計画は [docs/TEX_COMPAT_PLAN.md](docs/TEX_COMPAT_PLAN.md) にあります。
+
 ---
 
 ## 組版の原則
@@ -108,6 +115,7 @@ PenchantManufacture_ImagePipeline/
 └── docs/
     ├── TYPESET_SPEC.md        ← 組版仕様（グリッド・各構造の配置規則）
     ├── HANDOFF_PLAN.md        ← 引継ぎ資料（未対応・本家連動タスク）
+    ├── TEX_COMPAT_PLAN.md     ← TeX 互換化のロードマップ（記法互換・組版能力・グリフ依存）
     └── previews/*.png         ← README 掲載画像（build_previews.py が生成）
 ```
 
@@ -117,5 +125,10 @@ PenchantManufacture_ImagePipeline/
 - 下付き小文字（ᵢ ₖ 等）はフォントに無いため 50% 縮小の代替になる（ステムは 3 セル相当）。
 - デカール質感（`basis/scripts/generate_decal.py`）は未適用。平塗り出力のみ。
 - 複数行の `&` 揃え（`=` 位置の整列）・行列の括弧自動付与・Bot／API 層は未実装。
+- LaTeX 数式でよく使う命令 115 種のうち登録済みは 27 種。未登録の 88 種のうち
+  **20 種はフォントに字があり、命令を足すだけで使えます**（作字不要）。残る 68 種は本家の作字待ち。
+- 行内の空きは二項演算子・関係子とも一律 11 セル。TeX のアトム種別ごとの空き
+  （thin 10 / medium 13 / thick 17 セル）には未対応。
 
-以上は [docs/HANDOFF_PLAN.md](docs/HANDOFF_PLAN.md) にタスクとして整理しています。
+以上は [docs/HANDOFF_PLAN.md](docs/HANDOFF_PLAN.md)（一般タスク）と
+[docs/TEX_COMPAT_PLAN.md](docs/TEX_COMPAT_PLAN.md)（TeX 互換化）にタスクとして整理しています。
