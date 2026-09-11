@@ -153,6 +153,7 @@ git submodule update --remote basis          # 本家の main へ追従
 
 組版規則を変えるときは **SPEC → 実装 → テスト → `python scripts/build_previews.py`** の順で、
 `docs/previews/` の再生成を同じコミットに含める（本家の README プレビュー運用と同じ）。
+画素が変わらない再生成（実行環境の違いで PNG のバイト列だけが変わる）はコミットに含めない。
 
 ## 実装の指針
 
@@ -183,6 +184,8 @@ git submodule update --remote basis          # 本家の main へ追従
 - **言語**: Python 3.11+
 - **主要ライブラリ**: `fontTools`（メトリクス・カーニング・アウトライン）/ `cairosvg`（SVG→PNG）
   / `Pillow` / `numpy` `scipy`（SDF）/ `click`（CLI）/ `svgwrite`（合成 SVG 生成）
+- **libcairo**: `cairosvg` が使う libcairo は pip では入らない。macOS（Homebrew）は `brew install cairo` ＋
+  `DYLD_FALLBACK_LIBRARY_PATH=/opt/homebrew/lib`（dyld の既定の探索先に無いため）。
 
 ---
 

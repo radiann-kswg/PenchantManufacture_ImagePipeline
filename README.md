@@ -26,6 +26,9 @@ python tests/test_typeset.py                # セルフチェック
 ```
 
 Python 3.11+ / fontTools / cairosvg / Pillow / numpy / scipy / click。
+`cairosvg` が使う libcairo は pip では入らないため別途導入します。macOS（Homebrew）では
+`brew install cairo` のうえ `export DYLD_FALLBACK_LIBRARY_PATH=/opt/homebrew/lib` を設定します
+（`/opt/homebrew/lib` は既定のライブラリ探索先に含まれないため）。
 
 ## 使い方
 
