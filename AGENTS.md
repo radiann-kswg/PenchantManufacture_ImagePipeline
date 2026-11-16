@@ -50,7 +50,7 @@ PenchantManufacture_ImagePipeline リポジトリ固有指示の **唯一の正�
 
 | 使う | 使わない |
 | --- | --- |
-| `basis/src/glyphs/char_*.svg`（アウトライン化済みパス・409字＋数字 `0` の別字形 1 点） | `basis/dist/glyphs_decal/{variant}/*.png` |
+| `basis/src/glyphs/char_*.svg`（アウトライン化済みパス・409字＋数字 `0` `⁰` `₀` の別字形 3 点） | `basis/dist/glyphs_decal/{variant}/*.png` |
 | `basis/src/glyphs_roman/roman_*.svg`（合成ローマ数字ソース・54点） | `basis/dist/glyphs_decal_square/{variant}/*.png` |
 | `basis/assets/fonts/PenchantManufacture.otf`（advance・GPOS カーニング・OS/2 win 帯） | `basis/dist/glyphs_roman/`, `basis/dist/glyphs_spacer/` |
 
